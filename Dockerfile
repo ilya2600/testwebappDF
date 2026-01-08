@@ -6,7 +6,7 @@ WORKDIR /app
 COPY requirements.txt .
 COPY app.py .
 COPY templates/ templates/
-COPY database.db .
+# COPY database.db .
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
