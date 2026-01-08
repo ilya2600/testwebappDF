@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Notes CRUD</title>
+</head>
+<body>
+
+<h1>Notes</h1>
+
+<input id="noteInput" placeholder="New note">
+<button onclick="addNote()">Add</button>
+
+<ul id="notes"></ul>
+
+<script>
+function loadNotes() {
+    fetch("/notes")
+        .then(r => r.json())
+        .then(data => {
+            notes.innerHTML = ""
+            data.forEach(n => {
+                notes.innerHTML += `
+                    <li>
+                        <input value="${n.text}" onchange="editNote(${n.id}, this.value)">
+                        <button onclick="deleteNote(${n.id})">X</button>
+                    </li>
+                `
+            })
+        })
+}
+
+function addNote() {
+    fetch("/notes", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({text: noteInput.value})
+    }).then(() => {
+        noteInput.value = ""
+        loadNotes()
+    })
+}
+
+function editNote(id, text) {
+    fetch("/notes/" + id, {
+        method: "PUT",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({text})
+    })
+}
+
+function deleteNote(id) {
+    fetch("/notes/" + id, {method: "DELETE"})
+        .then(loadNotes)
+}
+
+loadNotes()
+</script>
+
+</body>
+</html>
